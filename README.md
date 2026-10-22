@@ -2,8 +2,9 @@
 
 **Orders delivered more than a week late received a 1-star review 70% of the time. Late orders were 6.7% of deliveries but produced 37% of all 1-star reviews.**
 
-Tools: PostgreSQL, SQL (CTEs, window functions, conditional aggregation), Python (pandas, matplotlib)
-Data: [Brazilian E-Commerce Public Dataset by Olist](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce), 99,441 orders across 9 linked tables, Sep 2016 to Oct 2018
+**Tools**: PostgreSQL, SQL (CTEs, window functions, conditional aggregation), Python (pandas, matplotlib)
+
+**Data**: [Brazilian E-Commerce Public Dataset by Olist](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce), 99,441 orders across 9 linked tables, Sep 2016 to Oct 2018
 
 ---
 
@@ -89,4 +90,4 @@ olist-sales-analysis/
 
 ---
 
-Olorunmaiye Peter Ayanfe | [LinkedIn] | [Portfolio website]
+Olorunmaiye Peter Ayanfe 
