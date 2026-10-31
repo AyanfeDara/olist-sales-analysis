@@ -1,29 +1,23 @@
 -- =====================================================================
 -- Q4. Where are deliveries slowest, and does that line up with lower scores?
 -- =====================================================================
--- WHY IT MATTERS
+-- Why it matters
 --   Shows logistics where to invest first.
 --
--- DECISIONS TO MAKE FIRST
---   - Group by customer_state (where the order is delivered).
---   - Leave out states with very few orders (for example fewer than 300),
---     or their averages will be noisy. Say what cut-off you used.
+-- Approach
+--   - Grouped by customer_state, where the order is delivered.
+--   - States with fewer than 300 delivered orders are left out, so their
+--     averages are not driven by a handful of orders (21 of 27 states kept).
+--   - Delivery days = delivered date minus purchase date; late = delivered
+--     after the estimated date.
 --
--- PART A: delivery performance by state
---   Output columns: customer_state, orders, avg_delivery_days, late_rate_pct, avg_review_score
---   delivery days = delivered date minus purchase date (cast both to ::date)
---   late = delivered date after the estimated delivery date
---   Hints: HAVING COUNT(*) >= 300; ROUND(..., 1) for readable numbers.
+-- Part A: delivery days, late rate and average review score by state
+-- Part B: the 5 states with the highest late rate (RANK window function)
 --
--- PART B: rank states
---   Add RANK() OVER (ORDER BY late_rate_pct DESC) and keep the worst 5.
---
--- PART C (stretch): state-to-state lanes
---   Join sellers to get seller_state, then find the seller_state to
---   customer_state pairs with the highest late rate (minimum 200 orders).
+-- Results are saved in results/.
 -- =====================================================================
 
--- Part A: write your query below.
+-- Part A: delivery days, late rate and average review score by state
 WITH order_scores AS (
     SELECT order_id,
            AVG(review_score) AS review_score
@@ -46,7 +40,7 @@ HAVING COUNT(*) >= 300
 ORDER BY late_rate_pct DESC;
 
 
--- Part B: write your query below.
+-- Part B: the 5 states with the highest late rate (RANK window function)
 WITH order_scores AS (
     SELECT order_id,
            AVG(review_score) AS review_score
@@ -77,7 +71,3 @@ SELECT late_rank, customer_state, orders, avg_delivery_days, late_rate_pct, avg_
 FROM ranked
 WHERE late_rank <= 5
 ORDER BY late_rank;
-
-
--- Part C: write your query below.
-

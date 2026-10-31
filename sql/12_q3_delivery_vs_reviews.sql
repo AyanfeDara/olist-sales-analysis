@@ -1,34 +1,26 @@
 -- =====================================================================
--- Q3. Do late deliveries cause bad reviews?
+-- Q3. Do late deliveries go with bad reviews?
 -- =====================================================================
--- WHY IT MATTERS
+-- Why it matters
 --   If lateness drives low scores, fixing logistics protects ratings,
 --   which drive future sales on the marketplace.
 --
--- DECISIONS TO MAKE FIRST
---   - Use delivered orders that have a delivery date (check 4).
+-- Approach
+--   - Delivered orders with a delivery date only (data check 4).
 --   - Delay in days = delivered date minus estimated date
 --     (negative = early, positive = late).
---   - Orders with several reviews (check 6): average them per order first,
---     so those orders are not counted twice.
+--   - Orders with several reviews (data check 6) are averaged per order
+--     first, so they are not counted twice.
+--   - This shows association, not proof of cause: product quality or the
+--     seller could also explain low scores.
 --
--- PART A: average review score by delay bucket
---   Buckets: more than 7 days early, 1-7 days early, on time (0),
---            1-3 days late, 4-7 days late, more than 7 days late
---   Output columns: delay_bucket, orders, avg_review_score, pct_1_star
---   Hints: casting both timestamps to ::date and subtracting gives whole days;
---          CASE WHEN for buckets;
---          order the buckets with a sort key column, not alphabetically.
+-- Part A: average review score and share of 1-star reviews by delay
+-- Part B: share of all 1-star reviews that come from late orders
 --
--- PART B: share of all 1-star reviews that come from late orders
---   Output columns: one_star_reviews, one_star_from_late, pct_from_late
---
--- CAUTION FOR THE README
---   This shows association, not proof of cause. Name one other factor that
---   could explain low scores (for example product category or seller).
+-- Results are saved in results/.
 -- =====================================================================
 
--- Part A: write your query below.
+-- Part A: average review score and share of 1-star reviews by delay
 WITH order_scores AS (
     SELECT order_id,
            AVG(review_score) AS review_score
@@ -73,7 +65,7 @@ GROUP BY sort_key
 ORDER BY sort_key;
 
 
--- Part B: write your query below.
+-- Part B: share of all 1-star reviews that come from late orders
 WITH order_scores AS (
     SELECT order_id,
            AVG(review_score) AS review_score
@@ -94,4 +86,3 @@ SELECT COUNT(*) FILTER (WHERE s.review_score = 1) AS one_star_reviews,
        ROUND(100.0 * COUNT(*) FILTER (WHERE d.delay_days > 0) / COUNT(*), 1) AS pct_of_orders_late
 FROM delivered d
 JOIN order_scores s ON s.order_id = d.order_id;
-

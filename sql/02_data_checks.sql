@@ -1,8 +1,8 @@
 -- =====================================================================
 -- 02_data_checks.sql
 -- Run after loading. Each check prints a small result.
--- Write down what you find in notes/data_quality.md: these quirks
--- decide how you write the analysis queries, and interviewers ask about them.
+-- What each check found, and the decisions it led to, are written up in
+-- notes/data_quality.md.
 -- =====================================================================
 
 -- 1. Row counts. Expected: customers 99,441 | geolocation 1,000,163 |
@@ -59,7 +59,7 @@ GROUP BY p.product_category_name
 ORDER BY products DESC;
 
 -- 8. Item revenue against payments. Payments include freight and instalment
---    interest, so the two totals differ. Decide which one "revenue" means.
+--    interest, so the two totals differ. Revenue here means item price only.
 SELECT
     (SELECT SUM(price)                 FROM order_items)    AS item_price_total,
     (SELECT SUM(price + freight_value) FROM order_items)    AS price_plus_freight_total,

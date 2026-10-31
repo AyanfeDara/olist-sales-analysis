@@ -1,32 +1,23 @@
 -- =====================================================================
 -- Q2. How many customers come back, and how fast?
 -- =====================================================================
--- WHY IT MATTERS
+-- Why it matters
 --   A business that relies only on first-time buyers spends heavily on
 --   acquisition. The repeat rate shows how much room retention has.
 --
--- DECISIONS TO MAKE FIRST
---   - Use customer_unique_id, not customer_id (check 9 shows why).
---   - Count only orders that were not canceled or unavailable.
+-- Approach
+--   - Customers are counted with customer_unique_id, because Olist creates
+--     a new customer_id for every order (data check 9).
+--   - Canceled and unavailable orders are left out.
 --
--- PART A: repeat purchase rate
---   Output columns: customers, repeat_customers, repeat_rate_pct
---   Hint: count orders per customer_unique_id in a CTE, then count how many have 2 or more.
+-- Part A: repeat purchase rate
+-- Part B: days from first to second order, and the median
+--         (ROW_NUMBER window function, PERCENTILE_CONT)
 --
--- PART B: days between first and second order for repeat customers
---   Output columns: customer_unique_id, first_order, second_order, days_between
---   Then summarise: median days (PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY ...)).
---   Hint: ROW_NUMBER() OVER (PARTITION BY customer_unique_id ORDER BY order_purchase_timestamp).
---
--- PART C (stretch): monthly cohort retention
---   Group customers by the month of their first order, then count how many
---   ordered again in each later month. This is a classic interview question.
---
--- SELF-CHECK
---   The total in Part A should be close to the unique customer count in check 9.
+-- Results are saved in results/.
 -- =====================================================================
 
--- Part A: write your query below.
+-- Part A: repeat purchase rate
 WITH customer_orders AS (
     SELECT c.customer_unique_id,
            COUNT(DISTINCT o.order_id) AS orders
@@ -41,7 +32,7 @@ SELECT COUNT(*) AS customers,
 FROM customer_orders;
 
 
--- Part B: write your query below.
+-- Part B: days from first to second order, and the median
 WITH ranked AS (
     SELECT c.customer_unique_id,
            o.order_purchase_timestamp,
@@ -66,7 +57,3 @@ SELECT COUNT(*) AS repeat_customers,
        COUNT(*) FILTER (WHERE second_order = first_order) AS same_day,
        ROUND(100.0 * COUNT(*) FILTER (WHERE second_order = first_order) / COUNT(*), 1) AS same_day_pct
 FROM first_two;
-
-
--- Part C: write your query below.
-
